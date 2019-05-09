@@ -39,6 +39,7 @@
         color: #b9b9b9;
         border: 1px solid #000000;
         font-family: Helvetica, sans-serif;
+        tab-size: 2;
       }
 
       #t.codemode {
@@ -57,7 +58,7 @@
     </style>
   </head>
   <body>
-    <textarea id="t">Begin writing here...</textarea>
+    <textarea id="t"></textarea>
     <p id="byline">
       Built by
       <a href="https://jamonholmgren.com" target="_blank">Jamon Holmgren</a>
@@ -76,6 +77,9 @@
     <script>
       var TAB_TEXT = "\t";
       var mode = "text";
+      var DEFAULT_TEXT =
+        "We'll remember what you wrote, even if you close the tab and come back. Try the 'Code Mode' in the bottom bar!";
+
       function setMode(newMode) {
         var t = document.getElementById("t");
         mode = newMode;
@@ -103,7 +107,6 @@
       function tabHandler(e) {
         if (mode !== "code") return;
         if (e.keyCode !== 13 && e.keyCode !== 9) return;
-        e.preventDefault();
 
         // adapted from https://stackoverflow.com/a/45396754/204044
         // Enter Key?
@@ -112,7 +115,7 @@
           if (this.selectionStart == this.selectionEnd) {
             // find start of the current line
             var sel = this.selectionStart;
-            var text = $(this).val();
+            var text = this.value;
             while (sel > 0 && text[sel - 1] != "\n") sel--;
 
             var lineStart = sel;
@@ -129,6 +132,7 @@
               // Scroll caret visible
               this.blur();
               this.focus();
+              e.preventDefault();
               return false;
             }
           }
@@ -136,6 +140,7 @@
 
         // Tab key?
         if (e.keyCode === 9) {
+          e.preventDefault();
           // selection?
           if (this.selectionStart == this.selectionEnd) {
             // These single character operations are undoable
@@ -202,7 +207,7 @@
         mode = localStorage.getItem("mode") || "writing";
         setMode(mode);
 
-        t.value = localStorage.getItem("text") || "Begin writing here...";
+        t.value = localStorage.getItem("text") || DEFAULT_TEXT;
 
         t.addEventListener("input", function(ev) {
           localStorage.setItem("text", t.value);
