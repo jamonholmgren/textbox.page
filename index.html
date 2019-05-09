@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+  <head>
+    <title>textbox.page - Simple text box for writing</title>
+    <style>
+      html, body {
+        background: #252526;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+        font-family: monospace;
+      }
+      #t {
+        width: 94%;
+        padding: 2%;
+        /* min-height: 400px; */
+        height: 80%;
+        margin: 1%;
+        background: #212121;
+        font-size: 18px;
+        color: #b9b9b9;
+        border: 1px solid #000000;
+        font-family: Helvetica, sans-serif;
+      }
+
+      #t.codemode {
+        font-family: monospace;
+      }
+
+      #byline {
+        text-align: center;
+        font-size: 14px;
+        color: #b9b9b9;
+      }
+      #byline a, #byline a:visited {
+        color: #b9b9b9;
+      }
+    </style>
+  </head>
+  <body>
+    <textarea id="t">Begin writing here...</textarea>
+    <p id="byline">
+      Built by
+      <a href="https://jamonholmgren.com" target="_blank">Jamon Holmgren</a>
+      &bullet;
+      <a href="https://github.com/jamonholmgren/textbox.page" target="_blank">Github Source</a>
+      &bullet;
+      <a href="https://infinite.red" target="_blank">Infinite Red</a>
+      &bullet;
+      <a href="javascript:codeMode()">Code Mode</a>
+      &bullet;
+      <a href="javascript:writingMode()">Writing Mode</a>
+    </p>
+
+    <script>
+        function ready(fn) {
+          (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading")
+            ? fn()
+            : document.addEventListener('DOMContentLoaded', fn)
+        }
+  
+        ready(function () {
+          var t = document.getElementById("t")
+          t.innerText = localStorage.getItem('text') || "Begin writing here..."
+          if (localStorage.getItem('mode') === 'code') t.classList.add('codemode')
+          t.addEventListener("input", function (ev) {
+            localStorage.setItem('text', t.value);
+          })
+          t.select(); t.focus()
+        })
+  
+        function codeMode() {
+          var t = document.getElementById("t")
+          t.classList.add('codemode')
+          localStorage.setItem('mode', 'code');
+        }
+  
+        function writingMode() {
+          var t = document.getElementById("t")
+          t.classList.remove('codemode')
+          localStorage.setItem('mode', 'writing');
+        }
+      </script>
+  </body>
+</html>
+
