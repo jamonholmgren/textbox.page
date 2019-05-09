@@ -1,9 +1,27 @@
-<!doctype html>
+<!DOCTYPE html>
+<!--
+
+  Hey there! Thanks for looking at my source code.
+
+  I'm Jamon Holmgren, author of this tiny website. I'd be honored if you would contribute
+  to this and make it better!
+
+  The rules:
+  
+  1. One file only, no dependencies
+  2. The source code has to be readable
+
+  If you like this little experiment, hit me up on Twitter: https://twitter.com/jamonholmgren
+
+  Happy writing!
+
+-->
 <html>
   <head>
     <title>textbox.page - Simple text box for writing</title>
     <style>
-      html, body {
+      html,
+      body {
         background: #252526;
         height: 100%;
         padding: 0;
@@ -32,7 +50,8 @@
         font-size: 14px;
         color: #b9b9b9;
       }
-      #byline a, #byline a:visited {
+      #byline a,
+      #byline a:visited {
         color: #b9b9b9;
       }
     </style>
@@ -42,45 +61,156 @@
     <p id="byline">
       Built by
       <a href="https://jamonholmgren.com" target="_blank">Jamon Holmgren</a>
-      &bullet;
-      <a href="https://github.com/jamonholmgren/textbox.page" target="_blank">Github Source</a>
-      &bullet;
+      &bull;
+      <a href="https://github.com/jamonholmgren/textbox.page" target="_blank"
+        >Github Source</a
+      >
+      &bull;
       <a href="https://infinite.red" target="_blank">Infinite Red</a>
-      &bullet;
+      &bull;
       <a href="javascript:codeMode()">Code Mode</a>
-      &bullet;
+      &bull;
       <a href="javascript:writingMode()">Writing Mode</a>
     </p>
 
     <script>
-        function ready(fn) {
-          (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading")
-            ? fn()
-            : document.addEventListener('DOMContentLoaded', fn)
+      var TAB_TEXT = "\t";
+      var mode = "text";
+      function setMode(newMode) {
+        var t = document.getElementById("t");
+        mode = newMode;
+        if (mode === "code") {
+          t.classList.add("codemode");
+        } else {
+          t.classList.remove("codemode");
         }
-  
-        ready(function () {
-          var t = document.getElementById("t")
-          t.innerText = localStorage.getItem('text') || "Begin writing here..."
-          if (localStorage.getItem('mode') === 'code') t.classList.add('codemode')
-          t.addEventListener("input", function (ev) {
-            localStorage.setItem('text', t.value);
-          })
-          t.select(); t.focus()
-        })
-  
-        function codeMode() {
-          var t = document.getElementById("t")
-          t.classList.add('codemode')
-          localStorage.setItem('mode', 'code');
+        localStorage.setItem("mode", mode);
+      }
+      function codeMode() {
+        setMode("code");
+      }
+      function writingMode() {
+        setMode("writing");
+      }
+
+      // text input event for character insertion
+      function insertText(el, text) {
+        var te = document.createEvent("TextEvent");
+        te.initTextEvent("textInput", true, true, null, text, 9, "en-US");
+        el.dispatchEvent(te);
+      }
+
+      function tabHandler(e) {
+        if (mode !== "code") return;
+        if (e.keyCode !== 13 && e.keyCode !== 9) return;
+        e.preventDefault();
+
+        // adapted from https://stackoverflow.com/a/45396754/204044
+        // Enter Key?
+        if (e.keyCode === 13) {
+          // selection?
+          if (this.selectionStart == this.selectionEnd) {
+            // find start of the current line
+            var sel = this.selectionStart;
+            var text = $(this).val();
+            while (sel > 0 && text[sel - 1] != "\n") sel--;
+
+            var lineStart = sel;
+            while (text[sel] == " " || text[sel] == "\t") sel++;
+
+            if (sel > lineStart) {
+              // Insert carriage return and indented text
+              document.execCommand(
+                "insertText",
+                false,
+                "\n" + text.substr(lineStart, sel - lineStart)
+              );
+
+              // Scroll caret visible
+              this.blur();
+              this.focus();
+              return false;
+            }
+          }
         }
-  
-        function writingMode() {
-          var t = document.getElementById("t")
-          t.classList.remove('codemode')
-          localStorage.setItem('mode', 'writing');
+
+        // Tab key?
+        if (e.keyCode === 9) {
+          // selection?
+          if (this.selectionStart == this.selectionEnd) {
+            // These single character operations are undoable
+            if (!e.shiftKey) {
+              document.execCommand("insertText", false, "\t");
+            } else {
+              var text = $(this).val();
+              if (
+                this.selectionStart > 0 &&
+                text[this.selectionStart - 1] == "\t"
+              ) {
+                document.execCommand("delete");
+              }
+            }
+          } else {
+            // Block indent/unindent trashes undo stack.
+            // Select whole lines
+            var selStart = this.selectionStart;
+            var selEnd = this.selectionEnd;
+            var text = this.value;
+            while (selStart > 0 && text[selStart - 1] != "\n") selStart--;
+            while (
+              selEnd > 0 &&
+              text[selEnd - 1] != "\n" &&
+              selEnd < text.length
+            )
+              selEnd++;
+
+            // Get selected text
+            var lines = text.substr(selStart, selEnd - selStart).split("\n");
+
+            // Insert tabs
+            for (var i = 0; i < lines.length; i++) {
+              // Don't indent last line if cursor at start of line
+              if (i == lines.length - 1 && lines[i].length == 0) continue;
+
+              // Tab or Shift+Tab?
+              if (e.shiftKey) {
+                if (lines[i].startsWith("\t")) lines[i] = lines[i].substr(1);
+                else if (lines[i].startsWith("    "))
+                  lines[i] = lines[i].substr(4);
+              } else lines[i] = "\t" + lines[i];
+            }
+            lines = lines.join("\n");
+
+            // Update the text area
+            this.value = text.substr(0, selStart) + lines + text.substr(selEnd);
+            this.selectionStart = selStart;
+            this.selectionEnd = selStart + lines.length;
+          }
         }
-      </script>
+      }
+
+      function ready(fn) {
+        (document.attachEvent
+        ? document.readyState === "complete"
+        : document.readyState !== "loading")
+          ? fn()
+          : document.addEventListener("DOMContentLoaded", fn);
+      }
+
+      ready(function() {
+        var t = document.getElementById("t");
+        mode = localStorage.getItem("mode") || "writing";
+        setMode(mode);
+
+        t.value = localStorage.getItem("text") || "Begin writing here...";
+
+        t.addEventListener("input", function(ev) {
+          localStorage.setItem("text", t.value);
+        });
+        t.addEventListener("keydown", tabHandler, false);
+        t.select();
+        t.focus();
+      });
+    </script>
   </body>
 </html>
-
