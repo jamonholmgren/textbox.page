@@ -4,7 +4,7 @@ Just a simple textbox for pasting text into and editing.
 
 [textbox.page](https://textbox.page)
 
-<img alt="Screenshot of textbox.page" width="300" src="https://user-images.githubusercontent.com/1479215/57552564-2ac24300-7321-11e9-9a6a-090d38ca02ce.png" />
+<img alt="Screenshot of textbox.page" width="500" src="https://user-images.githubusercontent.com/1479215/57552564-2ac24300-7321-11e9-9a6a-090d38ca02ce.png" />
 
 Sometimes you just need to paste something somewhere. Rather than opening your notepad app or a code editor, go to textbox.page and paste it there.
 
