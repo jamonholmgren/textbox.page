@@ -10,4 +10,8 @@ It has a code mode and writing mode. The code mode supports tabbing.
 
 I'd love it if you would contribute! Keep it to one file (index.html) and no dependencies.
 
+## Deployment
+
+Just run `now --target production`. You'll have to have access to my Now.sh instance, of course.
+
 Made with :love: by [Jamon Holmgren](https://twitter.com/jamonholmgren)
