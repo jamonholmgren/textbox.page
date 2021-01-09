@@ -68,7 +68,6 @@
       .offscreen {
         clip-path: inset(100%);
         clip: rect(1px 1px 1px 1px); /* IE 6/7 */
-        clip: rect(1px, 1px, 1px, 1px);
         height: 1px;
         overflow: hidden;
         position: absolute;
@@ -86,22 +85,23 @@
       Built by
       <a href="https://jamonholmgren.com" target="_blank" rel="noopener">Jamon Holmgren</a>
       &bull;
-      <a href="https://github.com/jamonholmgren/textbox.page" target="_blank" rel="noopener"
-        >GitHub Source</a
-      >
+      <a href="https://github.com/jamonholmgren/textbox.page" target="_blank" rel="noopener">GitHub Source</a>
       &bull;
       <a href="https://infinite.red" target="_blank" rel="noopener">Infinite Red</a>
       &bull;
       <a href="javascript:codeMode()">Code Mode</a>
       &bull;
       <a href="javascript:writingMode()">Writing Mode</a>
+      &bull;
+      <span id="stats">0 lines, 0 words, 0 characters, 0 elapsed seconds</span>
     </p>
 
     <script>
       var TAB_TEXT = "\t";
       var mode = "text";
       var DEFAULT_TEXT =
-        "Hey there! This is a simple textbox that you can paste, write, edit, and copy from. We'll remember what you wrote, even if you close the tab and come back. Try the 'Code Mode' in the bottom bar!";
+        "Hey there! This is a simple textbox that you can paste, write, edit, and copy from. We'll remember what you wrote, even if you close the tab and come back. But don't worry -- we only store the information locally in your browser, not any servers or databases. We don't even have Google Analytics installed. Try the 'Code Mode' in the bottom bar!";
+      var t = document.getElementById("t");
       var t = document.getElementById("t");
 
       function setMode(newMode) {
@@ -119,6 +119,19 @@
       function writingMode() {
         setMode("writing");
       }
+
+      var startTime = new Date().getTime();
+      var stats = document.getElementById("stats");
+      function updateStats() {
+        var lines = t.value.split("\n").length;
+        var words = t.value.split(/\w\s\w/).length;
+        var chars = t.value.split("").length;
+        var seconds = Math.floor((new Date().getTime() - startTime) / 1000);
+        var secondsMinutes =
+          seconds < 59 ? seconds + " elapsed seconds" : Math.floor(seconds / 60) + " elapsed minutes";
+        stats.innerText = lines + " lines, " + words + " words, " + chars + " characters, " + secondsMinutes;
+      }
+      setInterval(updateStats, 1000);
 
       // text input event for character insertion
       function insertText(el, text) {
@@ -143,12 +156,13 @@
 
         t.addEventListener("input", function(ev) {
           localStorage.setItem("text", t.value);
+          updateStats();
         });
         t.select();
         t.focus();
       });
 
-      // loading this async for performance reasons
+      // loading this tab key handler async for performance reasons
       // adapted from https://stackoverflow.com/a/45396754/204044
       var loadAsync = function() {
         function tabHandler(e) {

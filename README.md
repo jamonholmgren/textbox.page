@@ -16,4 +16,4 @@ I'd love it if you would contribute! Keep it to one file (index.html) and no dep
 
 Just run `now --target production`. You'll have to have access to my Now.sh instance, of course.
 
-Made with :love: by [Jamon Holmgren](https://twitter.com/jamonholmgren)
+Made with :heart: by [Jamon Holmgren](https://twitter.com/jamonholmgren)
