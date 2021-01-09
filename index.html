@@ -94,7 +94,7 @@
       &bull;
       <a href="javascript:writingMode()">Writing Mode</a>
       &bull;
-      <span id="stats">0 words, 0 characters, 0 elapsed seconds</span>
+      <span id="stats">0 lines, 0 words, 0 characters, 0 elapsed seconds</span>
     </p>
 
     <script>
@@ -124,12 +124,13 @@
       var startTime = new Date().getTime();
       var stats = document.getElementById("stats");
       function updateStats() {
+        var lines = t.value.split("\n").length;
         var words = t.value.split(/\w\s\w/).length;
         var chars = t.value.split("").length;
         var seconds = Math.floor((new Date().getTime() - startTime) / 1000);
         var secondsMinutes =
           seconds < 59 ? seconds + " elapsed seconds" : Math.floor(seconds / 60) + " elapsed minutes";
-        stats.innerText = words + " words, " + chars + " characters, " + secondsMinutes;
+        stats.innerText = lines + " lines, " + words + " words, " + chars + " characters, " + secondsMinutes;
       }
       setInterval(updateStats, 1000);
 
