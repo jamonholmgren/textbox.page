@@ -1,6 +1,6 @@
 # textbox.page
 
-Just a simple textbox for pasting text into and editing.
+A simple textbox for pasting text into and editing. Preserves contents between page reloads and also provides some nifty stats at the bottom.
 
 [textbox.page](https://textbox.page)
 
