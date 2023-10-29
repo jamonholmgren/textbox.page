@@ -1,5 +1,9 @@
 # textbox.page
 
+**NOTE:** this has been moved to [my personal website](https://github.com/jamonholmgren/jamon.dev/blob/main/web/static/notes.html) and is no longer maintained here. Go make a PR over on that repo instead if you're interested in improving it.
+
+---
+
 A simple textbox for pasting text into and editing. Preserves contents between page reloads and also provides some nifty stats at the bottom.
 
 [textbox.page](https://textbox.page)
